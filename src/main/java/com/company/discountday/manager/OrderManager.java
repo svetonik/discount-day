@@ -1,7 +1,10 @@
-package com.company.discountday.service;
+package com.company.discountday.manager;
 
 import com.company.discountday.model.Order;
 import com.company.discountday.model.OrderResult;
+import com.company.discountday.service.FileOrderService;
+import com.company.discountday.parser.OrderParser;
+import com.company.discountday.service.OrderService;
 
 import java.io.IOException;
 import java.util.List;
@@ -9,9 +12,19 @@ import java.util.stream.Collectors;
 
 public class OrderManager {
 
-    private final FileOrderService fileService = new FileOrderService();
-    private final OrderParser parser = new OrderParser();
-    private final OrderService orderService = new OrderService();
+    private final FileOrderService fileService;
+    private final OrderParser parser;
+    private final OrderService orderService;
+
+    public OrderManager(
+            FileOrderService fileService,
+            OrderParser parser,
+            OrderService orderService
+    ) {
+        this.fileService = fileService;
+        this.parser = parser;
+        this.orderService = orderService;
+    }
 
     public void processOrders(
             String inputPath,

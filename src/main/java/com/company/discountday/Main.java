@@ -1,6 +1,9 @@
 package com.company.discountday;
 
-import com.company.discountday.service.OrderManager;
+import com.company.discountday.manager.OrderManager;
+import com.company.discountday.parser.OrderParser;
+import com.company.discountday.service.FileOrderService;
+import com.company.discountday.service.OrderService;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -9,7 +12,15 @@ import java.nio.file.Path;
 public class Main {
     public static void main(String[] args) {
 
-        OrderManager manager = new OrderManager();
+        FileOrderService fileService = new FileOrderService();
+        OrderParser parser = new OrderParser();
+        OrderService orderService = new OrderService();
+
+        OrderManager manager = new OrderManager(
+                fileService,
+                parser,
+                orderService
+        );
 
         try {
             manager.processOrders(
