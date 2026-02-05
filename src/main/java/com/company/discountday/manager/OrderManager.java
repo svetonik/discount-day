@@ -4,6 +4,7 @@ import com.company.discountday.model.Order;
 import com.company.discountday.model.OrderResult;
 import com.company.discountday.service.FileOrderService;
 import com.company.discountday.parser.OrderParser;
+import com.company.discountday.parser.ParserFactory;
 import com.company.discountday.service.OrderService;
 
 import java.io.IOException;
@@ -13,16 +14,13 @@ import java.util.stream.Collectors;
 public class OrderManager {
 
     private final FileOrderService fileService;
-    private final OrderParser parser;
     private final OrderService orderService;
 
     public OrderManager(
             FileOrderService fileService,
-            OrderParser parser,
             OrderService orderService
     ) {
         this.fileService = fileService;
-        this.parser = parser;
         this.orderService = orderService;
     }
 
@@ -33,6 +31,8 @@ public class OrderManager {
             double discountStep,
             double pricePerKg
     ) throws IOException {
+
+        OrderParser parser = ParserFactory.createParser(inputPath);
 
         List<String> lines = fileService.readFile(inputPath);
 

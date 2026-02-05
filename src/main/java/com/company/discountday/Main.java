@@ -1,7 +1,6 @@
 package com.company.discountday;
 
 import com.company.discountday.manager.OrderManager;
-import com.company.discountday.parser.OrderParser;
 import com.company.discountday.service.FileOrderService;
 import com.company.discountday.service.OrderService;
 
@@ -13,12 +12,10 @@ public class Main {
     public static void main(String[] args) {
 
         FileOrderService fileService = new FileOrderService();
-        OrderParser parser = new OrderParser();
         OrderService orderService = new OrderService();
 
         OrderManager manager = new OrderManager(
                 fileService,
-                parser,
                 orderService
         );
 
@@ -34,6 +31,22 @@ public class Main {
             try (var lines = Files.lines(Path.of("src/main/resources/result.txt"))) {
                 lines.forEach(System.out::println);
             }
+
+            System.out.println();
+
+
+            manager.processOrders(
+                    "src/main/resources/orders",
+                    "src/main/resources/result2.txt",
+                    0.50,
+                    0.05,
+                    10
+            );
+
+            try (var lines = Files.lines(Path.of("src/main/resources/result2.txt"))) {
+                lines.forEach(System.out::println);
+            }
+
 
         } catch (IOException e) {
             System.err.println("Ошибка при работе с файлами: " + e.getMessage());
