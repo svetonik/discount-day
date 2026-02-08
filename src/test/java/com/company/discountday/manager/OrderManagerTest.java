@@ -1,6 +1,5 @@
 package com.company.discountday.manager;
 
-import com.company.discountday.model.Order;
 import com.company.discountday.model.OrderResult;
 import com.company.discountday.service.FileOrderService;
 import com.company.discountday.service.OrderService;
@@ -13,7 +12,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -36,7 +34,6 @@ class OrderManagerTest {
     private OrderManager orderManager;
 
     private List<String> sampleLines;
-    private List<Order> sampleOrders;
     private List<OrderResult> sampleResults;
 
     @BeforeEach
@@ -45,11 +42,6 @@ class OrderManagerTest {
         sampleLines = Arrays.asList(
                 "2021-02-09T08:19:22|Recovery|11340",
                 "2021-02-09T08:42:59|Power Engineer|17480"
-        );
-
-        sampleOrders = Arrays.asList(
-                new Order(LocalDateTime.parse("2021-02-09T08:19:22"), "Recovery", 11340),
-                new Order(LocalDateTime.parse("2021-02-09T08:42:59"), "Power Engineer", 17480)
         );
 
         sampleResults = Arrays.asList(
@@ -126,10 +118,9 @@ class OrderManagerTest {
         String inputPath = "src/main/resources/empty.txt";
         String outputPath = "src/main/resources/result_empty.txt";
 
-        when(fileOrderService.readFile(inputPath)).thenReturn(Arrays.asList());
+        when(fileOrderService.readFile(inputPath)).thenReturn(List.of());
         when(orderService.calculateResults(anyList(), anyDouble(), anyDouble(), anyDouble()))
-                .thenReturn(Arrays.asList());
-
+                .thenReturn(List.of());
         // Act
         orderManager.processOrders(inputPath, outputPath, 0.50, 0.05, 10);
 
