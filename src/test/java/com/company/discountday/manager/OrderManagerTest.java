@@ -54,10 +54,10 @@ class OrderManagerTest {
     @Test
     void testProcessOrders_WithTxtFile_Success() throws IOException {
         // Arrange (Подготовка)
-        String inputPath = "src/main/resources/orders.txt";
-        String outputPath = "src/main/resources/result.txt";
+        String inputPath = "src/test/resources/test-orders.txt";
+        String outputPath = "src/test/resources/test-result.txt";
 
-        // Настраиваем поведение моков
+        // Настройка поведение моков
         when(fileOrderService.readFile(inputPath)).thenReturn(sampleLines);
         when(orderService.calculateResults(anyList(), eq(0.50), eq(0.05), eq(10.0)))
                 .thenReturn(sampleResults);
@@ -66,10 +66,10 @@ class OrderManagerTest {
         orderManager.processOrders(inputPath, outputPath, 0.50, 0.05, 10);
 
         // Assert (Проверка)
-        // Проверяем, что readFile был вызван с правильным путём
+        // Проверка, что readFile был вызван с правильным путём
         verify(fileOrderService).readFile(inputPath);
 
-        // Проверяем, что calculateResults был вызван с правильными параметрами
+        // Проверка, что calculateResults был вызван с правильными параметрами
         verify(orderService).calculateResults(
                 argThat(orders -> orders.size() == 2), // проверяем размер списка
                 eq(0.50),
@@ -77,7 +77,7 @@ class OrderManagerTest {
                 eq(10.0)
         );
 
-        // Проверяем, что writeFile был вызван
+        // Проверка, что writeFile был вызван
         verify(fileOrderService).writeFile(
                 eq(outputPath),
                 argThat(lines -> lines.size() == 2 &&
@@ -90,8 +90,8 @@ class OrderManagerTest {
     @Test
     void testProcessOrders_WithoutExtension_Success() throws IOException {
         // Arrange
-        String inputPath = "src/main/resources/orders";
-        String outputPath = "src/main/resources/result2.txt";
+        String inputPath = "src/test/resources/test-orders-hash";
+        String outputPath = "src/test/resources/test-result2.txt";
 
         List<String> hashDelimitedLines = Arrays.asList(
                 "2021-02-09T08:19:22#Recovery#11340",
@@ -115,8 +115,8 @@ class OrderManagerTest {
     @Test
     void testProcessOrders_WithEmptyFile_Success() throws IOException {
         // Arrange
-        String inputPath = "src/main/resources/empty.txt";
-        String outputPath = "src/main/resources/result_empty.txt";
+        String inputPath = "src/test/resources/empty-orders.txt";
+        String outputPath = "src/test/resources/test-result-empty.txt";
 
         when(fileOrderService.readFile(inputPath)).thenReturn(List.of());
         when(orderService.calculateResults(anyList(), anyDouble(), anyDouble(), anyDouble()))
@@ -139,10 +139,10 @@ class OrderManagerTest {
     @Test
     void testProcessOrders_ReadFileThrowsException() throws IOException {
         // Arrange
-        String inputPath = "src/main/resources/nonexistent.txt";
-        String outputPath = "src/main/resources/result.txt";
+        String inputPath = "src/test/resources/nonexistent.txt";
+        String outputPath = "src/test/resources/test-result.txt";
 
-        // Настраиваем мок, чтобы он выбросил исключение
+        // Настройка мок, чтобы он выбросил исключение
         when(fileOrderService.readFile(inputPath))
                 .thenThrow(new IOException("File not found"));
 
@@ -153,13 +153,13 @@ class OrderManagerTest {
             // Ожидаем, что исключение будет проброшено
         }
 
-        // Проверяем, что readFile был вызван
+        // Проверка, что readFile был вызван
         verify(fileOrderService).readFile(inputPath);
 
-        // Проверяем, что orderService НЕ был вызван (т.к. упали на чтении)
+        // Проверка, что orderService НЕ был вызван (т.к. упали на чтении)
         verify(orderService, never()).calculateResults(anyList(), anyDouble(), anyDouble(), anyDouble());
 
-        // Проверяем, что writeFile НЕ был вызван
+        // Проверка, что writeFile НЕ был вызван
         verify(fileOrderService, never()).writeFile(anyString(), anyList());
     }
 
@@ -167,8 +167,8 @@ class OrderManagerTest {
     @Test
     void testProcessOrders_WithDifferentDiscountParameters() throws IOException {
         // Arrange
-        String inputPath = "src/main/resources/orders.txt";
-        String outputPath = "src/main/resources/result.txt";
+        String inputPath = "src/test/resources/test-orders.txt";
+        String outputPath = "src/test/resources/test-result.txt";
         double startDiscount = 0.60;
         double discountStep = 0.10;
         double pricePerKg = 15.0;
@@ -189,13 +189,12 @@ class OrderManagerTest {
         );
     }
 
-
-     //Тест проверки количества вызовов методов
+    //Тест проверки количества вызовов методов
     @Test
     void testProcessOrders_VerifyMethodCallCounts() throws IOException {
         // Arrange
-        String inputPath = "src/main/resources/orders.txt";
-        String outputPath = "src/main/resources/result.txt";
+        String inputPath = "src/test/resources/test-orders.txt";
+        String outputPath = "src/test/resources/test-result.txt";
 
         when(fileOrderService.readFile(inputPath)).thenReturn(sampleLines);
         when(orderService.calculateResults(anyList(), anyDouble(), anyDouble(), anyDouble()))
@@ -204,12 +203,12 @@ class OrderManagerTest {
         // Act
         orderManager.processOrders(inputPath, outputPath, 0.50, 0.05, 10);
 
-        // Assert - проверяем, что каждый метод вызван ровно 1 раз
+        // Assert - проверка, что каждый метод вызван ровно 1 раз
         verify(fileOrderService, times(1)).readFile(inputPath);
         verify(orderService, times(1)).calculateResults(anyList(), anyDouble(), anyDouble(), anyDouble());
         verify(fileOrderService, times(1)).writeFile(eq(outputPath), anyList());
 
-        // Проверяем, что больше никаких взаимодействий не было
+        // Проверка, что больше никаких взаимодействий не было
         verifyNoMoreInteractions(fileOrderService);
         verifyNoMoreInteractions(orderService);
     }
